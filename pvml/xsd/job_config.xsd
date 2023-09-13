@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+  <xs:complexType name="parameterValue">
+    <xs:simpleContent>
+      <xs:extension base="xs:string">
+        <xs:attribute name="name" use="required" type="xs:string"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+  <xs:complexType name="input">
+    <xs:sequence>
+      <xs:element name="product" maxOccurs="unbounded">
+        <xs:complexType>
+          <xs:simpleContent>
+            <xs:extension base="xs:string">
+              <xs:attribute name="start" use="optional" type="xs:string"/>
+              <xs:attribute name="stop" use="optional" type="xs:string"/>
+            </xs:extension>
+          </xs:simpleContent>
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
+    <xs:attribute name="product_type" use="required" type="xs:string"/>
+  </xs:complexType>
+  <xs:simpleType name="postiveNumberList">
+    <xs:list itemType="xs:nonNegativeInteger"/>
+  </xs:simpleType>
+  <xs:complexType name="exitCodes">
+    <xs:simpleContent>
+      <xs:extension base="postiveNumberList">
+        <xs:attribute name="task" use="required" type="xs:string"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+  <xs:element name="pvmlJob">
+    <xs:complexType>
+      <xs:all>
+        <xs:element name="jobOrderId" type="xs:string"/>
+        <xs:element name="processorName" type="xs:string"/>
+        <xs:element name="processorVersion" type="xs:string"/>
+        <xs:element name="mode" minOccurs="0" type="xs:string"/>
+        <xs:element name="fileClass" minOccurs="0" type="xs:string"/>
+        <xs:element name="workingDirectory" minOccurs="0" type="xs:string"/>
+        <xs:element name="processingNode" minOccurs="0" type="xs:string"/>
+        <xs:element name="loggingLevel" minOccurs="0">
+          <xs:simpleType>
+            <xs:restriction base="xs:string">
+              <xs:enumeration value="DEBUG"></xs:enumeration>
+              <xs:enumeration value="INFO"></xs:enumeration>
+              <xs:enumeration value="PROGRESS"></xs:enumeration>
+              <xs:enumeration value="WARNING"></xs:enumeration>
+              <xs:enumeration value="ERROR"></xs:enumeration>
+            </xs:restriction>
+          </xs:simpleType>
+        </xs:element>
+        <xs:element name="enableBreakpoints" minOccurs="0" type="xs:boolean"/>
+        <xs:element name="test" minOccurs="0" type="xs:boolean"/>
+        <xs:element name="acquisitionStation" minOccurs="0" type="xs:string"/>
+        <xs:element name="processingStation" minOccurs="0" type="xs:string"/>
+        <xs:element name="orderType" minOccurs="0" type="xs:string"/>
+        <xs:element name="sensingStart" minOccurs="0" type="xs:string"/>
+        <xs:element name="sensingStop" minOccurs="0" type="xs:string"/>
+        <xs:element name="processingParameters" minOccurs="0">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="parameter" minOccurs="0" maxOccurs="unbounded" type="parameterValue"/>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="configSpaces" minOccurs="0">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="configSpace" minOccurs="0" maxOccurs="unbounded" type="parameterValue"/>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="inputs" minOccurs="0">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="input" minOccurs="0" maxOccurs="unbounded" type="input"/>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="exitCodes" minOccurs="0" type="exitCodes"/>
+        <xs:element name="archiveOptions" minOccurs="0"/>
+      </xs:all>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>
