@@ -198,9 +198,7 @@ splitLoggingLevel : optional, true/false/0/1, MFFI backend only
 globalBreakpointEnable : optional, true/false/0/1, MFFI backend only
   If enabled (the default) a single ``Breakpoint_Enable`` element will be
   included in the joborder file, otherwise each ``BreakPoint`` section in the
-  joborder file will get an ``Enable`` element. Note that it is currently not
-  possible with PVML to enable/disable breakpoints. Breakpoints will always be
-  disabled.
+  joborder file will get an ``Enable`` element.
 
 sensingTimeFlag : optional, true/false/0/1, MFFI backend only
   Whether the joborder file is allowed to have a ``Sensing_Time`` element.
