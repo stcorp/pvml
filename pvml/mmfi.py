@@ -67,6 +67,7 @@ def read_tasktable(config):
                 if tasktable is not None:
                     raise Error(f"multiple tasktables for {processor_name}/{processor_version}")
                 tasktable = tree
+                logger.info(f"using tasktable '{path}'")
 
     if tasktable is None:
         raise Error(f"no tasktable found for {config.processor_name}/{config.processor_version}")
