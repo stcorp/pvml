@@ -325,7 +325,7 @@ class Backend:
         """
         if not dry_run:
             filepath = Path(job.working_directory, f"JobOrder.{job.config.joborder_id}.xml")
-            logger.info(f"creating JobOrder file '{filepath}'")
+            logger.info(f"creating joborder file '{filepath}'")
 
         attributes = {
             "schemaName": job.config.joborder_schema_name,
