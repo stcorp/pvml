@@ -459,7 +459,7 @@ class Backend:
         # Locate output products.
         has_errors = False
         if job.config.variant_regex_output_pattern:
-            files = os.listdir(job.working_directory)  # type: List[str]
+            files = sorted(os.listdir(job.working_directory))  # type: List[str]
         for file_type, output in self.outputs.items():
             if job.config.variant_regex_output_pattern:
                 matched_files = []
@@ -467,7 +467,7 @@ class Backend:
                     if re.match(output.file_name_pattern, file) is not None:
                         matched_files.append(file)
             else:
-                matched_files = glob.glob(os.path.join(job.working_directory, output.file_name_pattern))
+                matched_files = sorted(glob.glob(os.path.join(job.working_directory, output.file_name_pattern)))
             if len(matched_files) == 0:
                 logger.error(f"[processor] no outputs for product type '{file_type}' found in working directory")
                 has_errors = True
@@ -475,6 +475,7 @@ class Backend:
                 assert file_type not in job.outputs
                 job_output = joborder.Output(file_type)
                 for file in matched_files:
+                    logger.info(f"found output file '{file}'")
                     job_output.products.append(joborder.OutputProduct([Path(file)]))
                 job.outputs[file_type] = job_output
         if has_errors:

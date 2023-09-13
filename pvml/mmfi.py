@@ -609,7 +609,7 @@ class Backend:
             for index, line in enumerate(list_file, start=1):
                 line = line.strip()
                 files = []
-                metadata_files = None
+                metadata_file = None
 
                 # Find outputs corresponding to the current line from the LIST file.
                 if job.config.variant_listfile_contains_stem:
@@ -661,13 +661,17 @@ class Backend:
                         else:
                             output = joborder.Output(product_type)
                             job.outputs[product_type] = output
+                        for file in files:
+                            logger.info(f"found output file '{file}'")
+                        if metadata_file is not None:
+                            logger.info(f"found metadata file '{metadata_file}'")
                         output.products.append(joborder.OutputProduct(files, metadata_file))
 
         if has_errors:
             raise ProcessorError(f"{path.name}: LIST file contains errors")
 
     def _scan_workspace_for_output_products(self, job: joborder.Job):
-        files = os.listdir(job.working_directory)  # type: List[str]
+        files = sorted(os.listdir(job.working_directory))  # type: List[str]
         for output in self.outputs.values():
             # Find all files that match the product type match expression.
             matched_files = []
@@ -683,8 +687,10 @@ class Backend:
                     job_output = joborder.Output(output.file_type)
                     job.outputs[output.file_type] = job_output
                 for file in matched_files:
+                    logger.info(f"found output file '{file}'")
                     metadata_file = Path(Path(file).stem + ".MTD")
                     if metadata_file.exists():
+                        logger.info(f"found metadata file '{metadata_file}'")
                         job_output.products.append(joborder.OutputProduct([Path(file)], metadata_file))
                     else:
                         job_output.products.append(joborder.OutputProduct([Path(file)]))
