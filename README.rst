@@ -7,18 +7,18 @@ PVML User Manual
 This document contains installation instructions, and a brief user manual for
 the Processor Verification Management Layer (PVML).
 
-PVML is a minimal Management Layer as used within the ESA Ground Segment for
-executing data processors. It supports the interface as defined by the
-Generic IPF Interface Guidelines (MMFI-GSEG-EOPG-TN-07-0003) as well as the
-more recent Earth Explorer specific Generic Processor ICD
+PVML is an implementation of a Management Layer as used within the ESA Ground
+Segment for executing data processors. It supports the interface as defined by
+the Generic IPF Interface Guidelines (MMFI-GSEG-EOPG-TN-07-0003) as well as
+the more recent Earth Explorer specific Generic Processor ICD
 (ESA-EOPG-EEGS-ID-0083).
 Using the TaskTable files from a processor, a global PVML configuration file,
 and a PVML job configuration file, PVML is able to create a JobOrder file and
 run the task(s) of a processor.
 
 Additionally, PVML will verify the inputs and outputs to check for compliance
-with the applicable ICD. The aim is to assure that a processor will operate
-correctly within the ESA ground segment.
+with the applicable ICD. The aim is to ensure that a processor will operate
+correctly within an ESA ground segment.
 
 
 
