@@ -33,7 +33,8 @@ To install pvml, download the .tar.gz package and use: ::
   $ cd pvml-4.0
   $ pip install .
 
-This will install the pvml python package and the `pvml` command line tool.
+This will install the ``pvml`` python package, which includes the ``pvml``
+command line tool.
 
 Running PVML
 ============
@@ -145,7 +146,7 @@ archiveBackend : optional
   products. This should be a reference to a python module that can be imported
   and that implements the PVML Archive Backend Interface.
   PVML itself comes with a simple local filesystem backend that is available
-  as `pvml.local`. This is the default backend if this option is not set.
+  as ``pvml.local``. This is the default backend if this option is not set.
 
 archiveOptions : optional
   This is a free-form xml block whose content is further specific by the
