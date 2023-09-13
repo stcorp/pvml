@@ -142,10 +142,7 @@ def wrapped_subprocess_call(exe, args=[], working_directory=None, stdout_callbac
             # Read a block of character data.
             data = os.read(pipe.fileno(), 8192)
             assert data is not None
-            try:
-                data = data.decode('utf-8')
-            except Exception:
-                pass
+            data = data.decode('utf-8', errors='replace')
 
             if len(data) == 0:
                 # Execute callback for any characters remaining in the buffer.
