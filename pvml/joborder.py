@@ -6,6 +6,7 @@ import logging
 import os
 from pathlib import Path
 import select
+import shutil
 import subprocess
 import sys
 import tempfile
