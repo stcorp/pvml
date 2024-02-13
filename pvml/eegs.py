@@ -423,9 +423,9 @@ class Backend:
             intermediate_output_list = etree.SubElement(task_element, "List_of_Intermediate_Outputs")
             for intermediate_output in task.intermediate_outputs:
                 intermediate_output_element = etree.SubElement(intermediate_output_list, "Intermediate_Output")
-                element = etree.SubElement(output_element, "Intermediate_Output_ID")
+                element = etree.SubElement(intermediate_output_element, "Intermediate_Output_ID")
                 element.text = intermediate_output.output_id
-                element = etree.SubElement(output_element, "Intermediate_Output_File")
+                element = etree.SubElement(intermediate_output_element, "Intermediate_Output_File")
                 element.text = intermediate_output.output_file
 
         tree = etree.ElementTree(joborder)
