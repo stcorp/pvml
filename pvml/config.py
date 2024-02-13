@@ -244,7 +244,7 @@ class Config:
             logger.error(f"could not verify '{config_file}' against schema")
             for error in exc.error_log:  # type: ignore
                 logger.error(f"{error.filename}:{error.line}: {error.message}")
-            raise Error(f"invalid PVML global configuration file")
+            raise Error("invalid PVML global configuration file")
         logger.info(f"file '{config_file}' valid according to internal schema")
 
         value = tree.findtext("interfaceBackend")
@@ -405,7 +405,7 @@ class Config:
             logger.error(f"could not verify '{config_file}' against schema")
             for error in exc.error_log:  # type: ignore
                 logger.error(f"{error.filename}:{error.line}: {error.message}")
-            raise Error(f"invalid PVML job configuration file")
+            raise Error("invalid PVML job configuration file")
         logger.info(f"file '{config_file}' valid according to internal schema")
 
         self.processor_name = tree.findtext("processorName")

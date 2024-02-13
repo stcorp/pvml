@@ -418,7 +418,7 @@ class Backend:
                 raise Error(f"input for '{product_types[0]}' from configuration could not be assigned to any tasks")
             else:
                 product_type_list = ", ".join(f"'{product_type}'" for product_type in product_types)
-                raise Error(f"inputs for " + product_type_list + " from configuration could not be assigned to any "
+                raise Error("inputs for " + product_type_list + " from configuration could not be assigned to any "
                             "tasks")
 
     def write_joborder(self, job: joborder.Job, dry_run: bool = False) -> Union[Path, bytes]:
@@ -595,7 +595,7 @@ class Backend:
                 for error in exc.error_log:  # type: ignore
                     logger.error(f"{error.filename}:{error.line}: {error.message}")
                 if not dry_run:
-                    raise Error(f"invalid joborder file")
+                    raise Error("invalid joborder file")
 
         if dry_run:
             return etree.tostring(tree, pretty_print=True, encoding="UTF-8", xml_declaration=True)
@@ -737,7 +737,7 @@ class Backend:
                                         f"'{filepath.name}'")
                         if stem in groups:
                             if groups[stem].metadata_filepath != product.metadata_filepath:
-                                raise ProcessorError(f"inconsistent metadata file presence when combining outputs " +
+                                raise ProcessorError("inconsistent metadata file presence when combining outputs " +
                                                      f"for product type '{output.product_type}' with stem '{stem}'")
                             groups[stem].filepaths.append(filepath)
                         else:
