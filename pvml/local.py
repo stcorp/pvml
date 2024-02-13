@@ -1,6 +1,6 @@
 import os
 from collections import namedtuple
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 import datetime
 import glob
 import logging
