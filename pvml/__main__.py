@@ -41,8 +41,6 @@ class PVMLConsoleHandler(logging.Handler):
 def main():
     logger = logging.getLogger("pvml")
 
-    short_print_general_exceptions = True
-
     # This parser is used in combination with the parse_known_args() function as a way to implement a "--version"
     # option that prints version information and exits, and is included in the help message.
     #
