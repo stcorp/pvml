@@ -5,6 +5,9 @@ import logging
 import math
 from pathlib import Path
 import sys
+from urllib.error import URLError
+from urllib.request import urlopen
+from urllib.parse import urlparse
 from typing import List, Optional, Union, Dict, Any
 
 from lxml import etree
@@ -95,6 +98,7 @@ class Config:
     joborder_id: str = "0"
     processor_name: Optional[str] = None
     processor_version: Optional[str] = None
+    tasktable_url: Optional[str] = None
     working_directory: Optional[Path] = None  # override of location of the working directory for this job
     log_level: str = "INFO"
     enable_breakpoints: bool = False
@@ -228,11 +232,21 @@ class Config:
         raise ValueError("unsupported datetime format '%s'" % format)
 
     def read_global_config(self, config_file: Union[Path, str]):
+        tree = None
         if isinstance(config_file, str):
-            config_file = Path(config_file)
-        config_file = config_file.resolve()
-        tree = etree.parse(config_file)
-        self.global_config_file = config_file
+            if urlparse(config_file).scheme != '':
+                try:
+                    with urlopen(config_file) as response:
+                        tree = etree.fromstring(response.read().decode("utf-8"))
+                except URLError as e:
+                    raise Error(f"failed to retrieve global config file {config_file} ({str(e)})")
+            else:
+                config_file = Path(config_file)
+        if tree is None:
+            assert type(config_file) == Path
+            config_file = config_file.resolve()
+            tree = etree.parse(config_file)
+            self.job_config_file = config_file
 
         with resources.as_file(resources.files(__package__).joinpath("xsd/global_config.xsd")) as resource:
             schema = resource.read_text()
@@ -253,28 +267,36 @@ class Config:
                 raise Error(f"configuration error (invalid interface backend '{value}')")
             self.interface_backend = value
         value = tree.findtext("taskTablePath")
-        assert value is not None
-        self.tasktable_path = []
-        for component in value.split(":"):
-            path = Path(component)
-            if not path.is_absolute():
-                path = Path(config_file.parent, path)
-            self.tasktable_path.append(path)
+        if value is not None:
+            self.tasktable_path = []
+            for component in value.split(":"):
+                path = Path(component)
+                if not path.is_absolute():
+                    if self.job_config_file is None:
+                        raise Error(f"tasktable path '{component}' relative to '{str(config_file)}' not supported")
+                    path = Path(self.job_config_file.parent, path)
+                self.tasktable_path.append(path)
         value = tree.findtext("workspaceDirectory")
-        assert value is not None
-        self.workspace_directory = Path(value)
-        if not self.workspace_directory.is_absolute():
-            self.workspace_directory = Path(config_file.parent, self.workspace_directory)
+        if value is not None:
+            self.workspace_directory = Path(value)
+            if not self.workspace_directory.is_absolute():
+                if self.job_config_file is None:
+                    raise Error(f"workspace directory '{value}' relative to '{str(config_file)}' not supported")
+                self.workspace_directory = Path(self.job_config_file.parent, self.workspace_directory)
         value = tree.findtext("taskTableSchema")
         if value is not None:
             self.tasktable_schema = Path(value)
             if not self.tasktable_schema.is_absolute():
-                self.tasktable_schema = Path(config_file.parent, self.tasktable_schema)
+                if self.job_config_file is None:
+                    raise Error(f"tasktable schema '{value}' relative to '{str(config_file)}' not supported")
+                self.tasktable_schema = Path(self.job_config_file.parent, self.tasktable_schema)
         value = tree.findtext("jobOrderSchema")
         if value is not None:
             self.joborder_schema = Path(value)
             if not self.joborder_schema.is_absolute():
-                self.joborder_schema = Path(config_file.parent, self.joborder_schema)
+                if self.job_config_file is None:
+                    raise Error(f"joborder schema '{value}' relative to '{str(config_file)}' not supported")
+                self.joborder_schema = Path(self.job_config_file.parent, self.joborder_schema)
         value = tree.findtext("taskWrapper")
         if value is not None:
             self.task_wrapper = value
@@ -389,11 +411,21 @@ class Config:
             self.archive_options = archive.parse_config(self, element)
 
     def read_job_config(self, config_file: Union[Path, str]):
+        tree = None
         if isinstance(config_file, str):
-            config_file = Path(config_file)
-        config_file = config_file.resolve()
-        tree = etree.parse(config_file)
-        self.job_config_file = config_file
+            if urlparse(config_file).scheme != '':
+                try:
+                    with urlopen(config_file) as response:
+                        tree = etree.fromstring(response.read().decode("utf-8"))
+                except URLError as e:
+                    raise Error(f"failed to retrieve job config file {config_file} ({str(e)})")
+            else:
+                config_file = Path(config_file)
+        if tree is None:
+            assert type(config_file) == Path
+            config_file = config_file.resolve()
+            tree = etree.parse(config_file)
+            self.job_config_file = config_file
 
         with resources.as_file(resources.files(__package__).joinpath("xsd/job_config.xsd")) as resource:
             schema = resource.read_text()
@@ -409,9 +441,15 @@ class Config:
         logger.info(f"file '{config_file}' valid according to internal schema")
 
         self.processor_name = tree.findtext("processorName")
-        assert self.processor_name is not None
         self.processor_version = tree.findtext("processorVersion")
-        assert self.processor_version is not None
+        self.tasktable_url = tree.findtext("taskTableUrl")
+        if self.tasktable_url is None:
+            if self.processor_name is None and self.processor_version is None:
+                raise Error("job config file should contain processorName/processorVersion and/or taskTableUrl")
+        if (self.processor_name is None and self.processor_version is not None):
+            raise Error("processorName should be provided if processorVersion is present")
+        if (self.processor_version is None and self.processor_name is not None):
+            raise Error("processorVersion should be provided if processorName is present")
         value = tree.findtext("jobOrderId")
         assert value is not None
         self.joborder_id = value
@@ -499,3 +537,12 @@ class Config:
             except ImportError:
                 raise Error(f"import of extension module '{self.archive_backend}' failed")
             self.archive_options = archive.parse_config(self, element)
+
+    def update(self, new: dict):
+        def update_dict(old: Any, new: dict):
+            for key, value in new.items():
+                if isinstance(value, dict):
+                    update_dict(old.__dict__[key], value)
+                else:
+                    setattr(old, key, value)
+        update_dict(self, new)

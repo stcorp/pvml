@@ -36,8 +36,9 @@
     <xs:complexType>
       <xs:all>
         <xs:element name="jobOrderId" type="xs:string"/>
-        <xs:element name="processorName" type="xs:string"/>
-        <xs:element name="processorVersion" type="xs:string"/>
+        <xs:element name="processorName" minOccurs="0" type="xs:string"/>
+        <xs:element name="processorVersion" minOccurs="0" type="xs:string"/>
+        <xs:element name="taskTableUrl" minOccurs="0" type="xs:string"/>
         <xs:element name="mode" minOccurs="0" type="xs:string"/>
         <xs:element name="fileClass" minOccurs="0" type="xs:string"/>
         <xs:element name="workingDirectory" minOccurs="0" type="xs:string"/>

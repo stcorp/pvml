@@ -383,13 +383,23 @@ jobOrderId : mandatory
   the workspace directory and will be included in the name of the joborder file
   that gets provided to the processor.
 
-processorName : mandatory
+processorName : optional
   This is the name of the processor. It is used, together with
   `processorVersion`, to find the appropriate tasktable file for the job.
+  Either processorName+processorVersion or taskTableUrl needs to be present in
+  the job config file.
 
-processorVersion : mandatory
+processorVersion : optional
   This is the version of the processor. It is used, together with the
   `processorName`, to find the appropriate tasktable file for the job.
+  Either processorName+processorVersion or taskTableUrl needs to be present in
+  the job config file.
+
+taskTableUrl : optional
+  Url (e.g. http:// or file://) pointing to a single tasktable file. If this
+  is provided then processorName/processorVersion can be omitted, but, if
+  present, will be used to verify against the name+version in the tasktable
+  file.
 
 mode : optional, MFFI backend only
   Run the processor using the specified mode. This determines which inputs are

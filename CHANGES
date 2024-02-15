@@ -1,3 +1,10 @@
+* Add taskTableUrl job configuration option.
+
+* taskTablePath and workingDirectory options in global configuration file are
+  now optional.
+
+* Add update() method to pvml.Config.
+
 4.0 2023-11-28
 ~~~~~~~~~~~~~~
 

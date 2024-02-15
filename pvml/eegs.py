@@ -7,6 +7,8 @@ import os
 from pathlib import Path
 import re
 import socket
+from urllib.error import URLError
+import urllib.request
 from typing import List, Dict, Optional, Union
 
 from lxml import etree
@@ -23,6 +25,30 @@ def read_tasktable(config):
 
     if config.tasktable_schema is not None:
         xmlschema = etree.XMLSchema(file=config.tasktable_schema)
+
+    if config.tasktable_url is not None:
+        try:
+             with urllib.request.urlopen(config.tasktable_url) as response:
+                tree = etree.fromstring(response.read().decode("utf-8"))
+        except URLError as e:
+            raise Error(f"failed to retrieve tasktable file {config.tasktable_url} ({str(e)})")
+        if xmlschema is not None:
+            etree.clear_error_log()
+            try:
+                xmlschema.assertValid(tree)
+            except etree.DocumentInvalid as exc:
+                logger.error(f"could not verify tasktable '{path}' against schema '{config.tasktable_schema}'")
+                for error in exc.error_log:  # type: ignore
+                    logger.error(f"{error.filename}:{error.line}: {error.message}")
+                raise Error(f"invalid tasktable file '{path}'")
+            logger.info(f"tasktable '{path}' valid according to schema '{config.tasktable_schema}'")
+        if config.processor_name is not None and config.processor_version is not None:
+            processor_name = tree.findtext("Processor_Name")
+            processor_version = tree.findtext("Processor_Version")
+            if processor_name != config.processor_name or processor_version != config.processor_version:
+                raise Error(f"processor name/version in tasktable ({processor_name}/{processor_version}) does " +
+                            f"not match job config ({config.processor_name}/{config.processor_version})")
+        return tree
 
     tasktable_paths = []
     for path in config.tasktable_path:

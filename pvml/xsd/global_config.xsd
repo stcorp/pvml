@@ -69,8 +69,8 @@
     <xs:complexType>
       <xs:all>
         <xs:element name="name" type="xs:NCName"/>
-        <xs:element name="taskTablePath" type="xs:string"/>
-        <xs:element name="workspaceDirectory" type="xs:string"/>
+        <xs:element name="taskTablePath" minOccurs="0" type="xs:string"/>
+        <xs:element name="workspaceDirectory" minOccurs="0" type="xs:string"/>
         <xs:element name="taskTableSchema" minOccurs="0" type="xs:string"/>
         <xs:element name="jobOrderSchema" minOccurs="0" type="xs:string"/>
         <xs:element name="jobOrderSchemaName" minOccurs="0" type="xs:string"/>
