@@ -259,7 +259,7 @@ class Config:
             for error in exc.error_log:  # type: ignore
                 logger.error(f"{error.filename}:{error.line}: {error.message}")
             raise Error("invalid PVML global configuration file")
-        logger.info(f"file '{config_file}' valid according to internal schema")
+        logger.debug(f"file '{config_file}' valid according to internal schema")
 
         value = tree.findtext("interfaceBackend")
         if value is not None:
@@ -438,7 +438,7 @@ class Config:
             for error in exc.error_log:  # type: ignore
                 logger.error(f"{error.filename}:{error.line}: {error.message}")
             raise Error("invalid PVML job configuration file")
-        logger.info(f"file '{config_file}' valid according to internal schema")
+        logger.debug(f"file '{config_file}' valid according to internal schema")
 
         self.processor_name = tree.findtext("processorName")
         self.processor_version = tree.findtext("processorVersion")

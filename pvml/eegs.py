@@ -77,7 +77,7 @@ def read_tasktable(config):
                 for error in exc.error_log:  # type: ignore
                     logger.error(f"{error.filename}:{error.line}: {error.message}")
                 raise Error(f"invalid tasktable file '{path}'")
-            logger.info(f"tasktable '{path}' valid according to schema '{config.tasktable_schema}'")
+            logger.debug(f"tasktable '{path}' valid according to schema '{config.tasktable_schema}'")
 
         processor_name = tree.findtext("Processor_Name")
         processor_version = tree.findtext("Processor_Version")
@@ -461,7 +461,7 @@ class Backend:
             etree.clear_error_log()
             try:
                 xmlschema.assertValid(tree)
-                logger.info(f"joborder valid according to schema '{job.config.joborder_schema}'")
+                logger.debug(f"joborder valid according to schema '{job.config.joborder_schema}'")
             except etree.DocumentInvalid as exc:
                 logger.error(f"could not verify joborder against schema '{job.config.joborder_schema}'")
                 for error in exc.error_log:  # type: ignore
