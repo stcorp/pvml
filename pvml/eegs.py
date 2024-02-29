@@ -154,6 +154,9 @@ class Backend:
         # read task table
         tree = read_tasktable(job.config)
 
+        if job.processor_reference is None:
+            job.set_processor_reference(tree.findtext("Processor_Name"), tree.findtext("Processor_Version"))
+
         self.toi_start = job.config.sensing_start
         self.toi_stop = job.config.sensing_stop
         predefined_inputs = {}  # type: Dict[str, joborder.Input]

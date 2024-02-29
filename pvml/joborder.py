@@ -211,6 +211,7 @@ def run_task(exe, name, version, job_path, job_id, expected_exit_codes, task_wra
 @dataclass
 class Job:
     config: Config
+    processor_reference: Optional[str]
     tasks: List[Task]
     inputs: Dict[str, Input]
     outputs: Dict[str, Output]
@@ -218,9 +219,13 @@ class Job:
 
     def __init__(self, config: Config) -> None:
         self.config = config
+        self.processor_reference = None
         self.tasks = []
         self.inputs = {}
         self.outputs = {}
+
+        if config.processor_name is not None and config.processor_version is not None:
+            self.processor_reference = f"{config.processor_name}/{config.processor_version}"
 
         self.log_file_handler = PVMLLogFileHandler()
         logger.addHandler(self.log_file_handler)
@@ -282,13 +287,21 @@ class Job:
                     output_files.append([path.name for path in product.filepaths])
         return sorted(output_files)
 
+    def set_processor_reference(self, processor_name: str, processor_version: str):
+        if self.processor_reference is not None:
+            raise Error("processor reference is already set")
+        self.processor_reference = f"{processor_name}/{processor_version}"
+        logger.info(f"processor version is '{self.processor_reference}'")
+
     def get_joborder(self):
         self.backend.initialize_job(self)
         return self.backend.write_joborder(self, dry_run=True)
 
     def run(self):
-        processor_reference = f"{self.config.processor_name}/{self.config.processor_version}"
-        logger.info(f"starting processor '{processor_reference}' using PVML {__version__}")
+        if self.processor_reference is not None:
+            logger.info(f"starting processor '{self.processor_reference}' using PVML {__version__}")
+        else:
+            logger.info(f"starting processor using PVML {__version__}")
 
         self.backend.initialize_job(self)
 
@@ -309,10 +322,16 @@ class Job:
             self.backend.locate_and_check_outputs(self)
 
             output_products = self._ingest_outputs()
-            logger.info(f"processor '{processor_reference}' finished successfully")
+            if self.processor_reference is not None:
+                logger.info(f"processor '{self.processor_reference}' finished successfully")
+            else:
+                logger.info("processor finished successfully")
             return output_products
         except Exception:
-            logger.info(f"processor '{processor_reference}' failed")
+            if self.processor_reference is not None:
+                logger.info(f"processor '{self.processor_reference}' failed")
+            else:
+                logger.info("processor failed")
             raise
         finally:
             if self.log_file_handler.pvml_log is not None:

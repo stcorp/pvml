@@ -166,6 +166,9 @@ class Backend:
         # read task table
         tree = read_tasktable(job.config)
 
+        if job.processor_reference is None:
+            job.set_processor_reference(tree.findtext("Processor_Name"), tree.findtext("Version"))
+
         value = tree.findtext("Test")
         if value == "Yes":
             self.enable_test = True
