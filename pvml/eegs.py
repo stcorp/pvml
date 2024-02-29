@@ -154,7 +154,7 @@ class Backend:
         # read task table
         tree = read_tasktable(job.config)
 
-        if job.processor_reference is None:
+        if job.processor_name is None:
             job.set_processor_reference(tree.findtext("Processor_Name"), tree.findtext("Processor_Version"))
 
         self.toi_start = job.config.sensing_start
@@ -367,9 +367,9 @@ class Backend:
         element = etree.SubElement(conf, "File_Class")
         element.text = job.config.file_class
         element = etree.SubElement(conf, "Processor_Name")
-        element.text = job.config.processor_name
+        element.text = job.processor_name
         element = etree.SubElement(conf, "Processor_Version")
-        element.text = job.config.processor_version
+        element.text = job.processor_version
         element = etree.SubElement(conf, "Processing_Node")
         if job.config.processing_node is not None:
             element.text = job.config.processing_node

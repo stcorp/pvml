@@ -166,7 +166,7 @@ class Backend:
         # read task table
         tree = read_tasktable(job.config)
 
-        if job.processor_reference is None:
+        if job.processor_name is None:
             job.set_processor_reference(tree.findtext("Processor_Name"), tree.findtext("Version"))
 
         value = tree.findtext("Test")
@@ -466,9 +466,9 @@ class Backend:
 
         conf = etree.SubElement(joborder, "Ipf_Conf")
         element = etree.SubElement(conf, "Processor_Name")
-        element.text = job.config.processor_name
+        element.text = job.processor_name
         element = etree.SubElement(conf, "Version")
-        element.text = job.config.processor_version
+        element.text = job.processor_version
         if job.config.order_type is not None:
             element = etree.SubElement(conf, "Order_Type")
             element.text = job.config.order_type
