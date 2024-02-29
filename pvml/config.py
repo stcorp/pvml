@@ -542,7 +542,10 @@ class Config:
         def update_dict(old: Any, new: dict):
             for key, value in new.items():
                 if isinstance(value, dict):
-                    update_dict(old.__dict__[key], value)
+                    if isinstance(old, dict):
+                        update_dict(old[key], value)
+                    else:
+                        update_dict(old.__dict__[key], value)
                 else:
                     setattr(old, key, value)
         update_dict(self, new)
