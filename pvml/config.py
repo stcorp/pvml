@@ -237,7 +237,7 @@ class Config:
             if urlparse(config_file).scheme != '':
                 try:
                     with urlopen(config_file) as response:
-                        tree = etree.fromstring(response.read().decode("utf-8"))
+                        tree = etree.fromstring(response.read())
                 except URLError as e:
                     raise Error(f"failed to retrieve global config file {config_file} ({str(e)})")
             else:
@@ -416,7 +416,7 @@ class Config:
             if urlparse(config_file).scheme != '':
                 try:
                     with urlopen(config_file) as response:
-                        tree = etree.fromstring(response.read().decode("utf-8"))
+                        tree = etree.fromstring(response.read())
                 except URLError as e:
                     raise Error(f"failed to retrieve job config file {config_file} ({str(e)})")
             else:

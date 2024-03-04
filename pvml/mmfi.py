@@ -36,7 +36,7 @@ def read_tasktable(config):
     if config.tasktable_url is not None:
         try:
              with urllib.request.urlopen(config.tasktable_url) as response:
-                tree = etree.fromstring(response.read().decode("utf-8"))
+                tree = etree.fromstring(response.read())
         except URLError as e:
             raise Error(f"failed to retrieve tasktable file {config.tasktable_url} ({str(e)})")
         if xmlschema is not None:
