@@ -413,9 +413,9 @@ class Backend:
                                     logger.info(f"assigning input '{file.file_name}' to task '{task.name}'")
                             task.inputs.append(input)
                             input_cache[input.file_type] = input
-                            id = input_element.get("id")
-                            if id is not None:
-                                named_inputs[id] = input
+                        id = input_element.get("id")
+                        if id is not None:
+                            named_inputs[id] = input
 
                     for output_element in task_element.findall("List_of_Outputs/Output"):
                         file_type = output_element.findtext("Type")
