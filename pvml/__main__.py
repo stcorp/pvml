@@ -10,7 +10,7 @@ from .exceptions import Error
 from .joborder import Job
 from .version import __version__
 
-__copyright__ = "Copyright (C) 2009-2023 S[&]T, The Netherlands."
+__copyright__ = "Copyright (C) 2009-2024 S[&]T, The Netherlands."
 
 
 class ProcessorStdoutConsoleHandler(logging.Handler):
