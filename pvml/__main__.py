@@ -57,8 +57,8 @@ def main():
         "to the pvml takes precedence."
 
     parser = argparse.ArgumentParser(prog="pvml", description=description, epilog=epilog, parents=[version_parser])
-    parser.add_argument("-d", "--debug", action="store_true", help="Print full stack trace for general exceptions")
-    parser.add_argument("--joborder", action="store_true", help="Only generate the joborder and print this to stdout")
+    parser.add_argument("-d", "--debug", action="store_true", help="print full stack trace for general exceptions")
+    parser.add_argument("--joborder", action="store_true", help="only generate the joborder and print this to stdout")
     parser.add_argument("global_config", type=Path, nargs="?", metavar="<PVML global config file>")
     parser.add_argument("job_config", type=Path, metavar="<PVML job config file>")
 
