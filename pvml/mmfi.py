@@ -239,6 +239,10 @@ class Backend:
                     if self.parameters[name] not in valid_list:
                         raise Error(f"processing parameter '{name}' has invalid value '{self.parameters[name]}', " +
                                     "supported are " + ", ".join(valid_list))
+        # check for invalid parameters in job.config.processing_parameters
+        for name in job.config.processing_parameters:
+            if name not in self.parameters:
+                raise Error(f"processing parameter '{name}' does not exist")
 
         # assign inputs based on config
         self.sensing_start = job.config.sensing_start
