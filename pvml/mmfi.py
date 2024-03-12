@@ -4,6 +4,7 @@ from dataclasses import dataclass, field
 import glob
 import logging
 import os
+import inspect
 from pathlib import Path
 import re
 from urllib.error import URLError
@@ -357,10 +358,15 @@ class Backend:
                             if input is None:
                                 for alternative in alternatives:
                                     if alternative["origin"] == "DB":
+                                        signature = inspect.signature(archive.resolve_mmfi)
+                                        kwargs = {}
+                                        if 'inputs' in signature.parameters:
+                                            kwargs["inputs"] = job.inputs
                                         products = archive.resolve_mmfi(alternative["file_type"],
                                                                         alternative["retrieval_mode"],
                                                                         self.sensing_start, self.sensing_stop,
-                                                                        alternative["t0"], alternative["t1"])
+                                                                        alternative["t0"], alternative["t1"],
+                                                                        **kwargs)
                                         if len(products) > 0:
                                             input = Input(alternative["file_type"], alternative["file_name_type"])
                                             job_input = joborder.Input(alternative["file_type"])
