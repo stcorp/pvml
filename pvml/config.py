@@ -543,8 +543,6 @@ class Config:
             for key, value in new.items():
                 if isinstance(value, dict):
                     if isinstance(old, dict):
-                        if key not in old:
-                            old[key] = {}
                         update_dict(old[key], value)
                     else:
                         update_dict(old.__dict__[key], value)
