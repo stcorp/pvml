@@ -303,6 +303,8 @@ class Backend:
                     executable = task_element.findtext("File_Name")
                     assert executable is not None
                     job_task = joborder.Task(name, version, executable)
+                    if name in job.config.exit_codes:
+                        job_task.expected_exit_codes = job.config.exit_codes[name]
                     job.tasks.append(job_task)
 
                     task = Task(name, version)

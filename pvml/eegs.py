@@ -201,6 +201,8 @@ class Backend:
                 assert value is not None
                 disk_space = int(value)
                 job_task = joborder.Task(name, version, executable)
+                if name in job.config.exit_codes:
+                    job_task.expected_exit_codes = job.config.exit_codes[name]
                 job.tasks.append(job_task)
 
                 task = Task(name, version, cpu_cores, ram, disk_space)
