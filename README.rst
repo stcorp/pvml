@@ -1,7 +1,7 @@
 PVML User Manual
 ================
 
-:Version: 4.0
+:Version: 4.1.1
 
 
 This document contains installation instructions, and a brief user manual for
@@ -29,8 +29,8 @@ https://github.com/stcorp/pvml.
 
 To install pvml, download the .tar.gz package and use: ::
 
-  $ tar zxf pvml-4.0.tar.gz
-  $ cd pvml-4.0
+  $ tar zxf pvml-4.1.1.tar.gz
+  $ cd pvml-4.1.1
   $ pip install .
 
 This will install the ``pvml`` python package, which includes the ``pvml``
