@@ -243,7 +243,7 @@ class Config:
             else:
                 config_file = Path(config_file)
         if tree is None:
-            assert type(config_file) == Path
+            assert isinstance(config_file, Path)
             config_file = config_file.resolve()
             tree = etree.parse(config_file)
             self.job_config_file = config_file
@@ -422,7 +422,7 @@ class Config:
             else:
                 config_file = Path(config_file)
         if tree is None:
-            assert type(config_file) == Path
+            assert isinstance(config_file, Path)
             config_file = config_file.resolve()
             tree = etree.parse(config_file)
             self.job_config_file = config_file
