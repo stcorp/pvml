@@ -1,3 +1,9 @@
+4.1.2 2024-11-06
+~~~~~~~~~~~~~~~~
+
+* Fixed issue in type checking of path arguments when calling pvml as a
+  command line script.
+
 4.1.1 2024-05-01
 ~~~~~~~~~~~~~~~~
 
