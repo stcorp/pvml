@@ -488,6 +488,7 @@ inputs/input : optional, multiple
   Only inputs for which ``Origin=DB`` in the tasktable file should be
   described. Whether an input reference is optional or mandatory depends on
   whether the input is defined as mandatory in the tasktable file.
+  The ``product_type`` attribute should contain the name of the product type.
 
   product : mandatory, multiple
     An input of a specific product type can consist of one or more products.
