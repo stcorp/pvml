@@ -504,7 +504,7 @@ inputs/input : optional, multiple
 
       <inputs>
         <input product_type="MY_TYPE">
-          <file start="2010-01-01T00:00:00" stop="2011-01-01T00:00:00">/data/MY_TYPE_2010_2011.dat</file>
+          <product start="2010-01-01T00:00:00" stop="2011-01-01T00:00:00">/data/MY_TYPE_2010_2011.dat</product>
         </input>
       </inputs>
 
