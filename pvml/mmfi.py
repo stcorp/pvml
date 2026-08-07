@@ -36,7 +36,7 @@ def read_tasktable(config):
 
     if config.tasktable_url is not None:
         try:
-             with urllib.request.urlopen(config.tasktable_url) as response:
+            with urllib.request.urlopen(config.tasktable_url) as response:
                 tree = etree.fromstring(response.read())
         except URLError as e:
             raise Error(f"failed to retrieve tasktable file {config.tasktable_url} ({str(e)})")
@@ -45,11 +45,12 @@ def read_tasktable(config):
             try:
                 xmlschema.assertValid(tree)
             except etree.DocumentInvalid as exc:
-                logger.error(f"could not verify tasktable '{path}' against schema '{config.tasktable_schema}'")
+                logger.error(f"could not verify tasktable '{config.tasktable_url}' against schema " +
+                             f"'{config.tasktable_schema}'")
                 for error in exc.error_log:  # type: ignore
                     logger.error(f"{error.filename}:{error.line}: {error.message}")
-                raise Error(f"invalid tasktable file '{path}'")
-            logger.info(f"tasktable '{path}' valid according to schema '{config.tasktable_schema}'")
+                raise Error(f"invalid tasktable file '{config.tasktable_url}'")
+            logger.info(f"tasktable '{config.tasktable_url}' valid according to schema '{config.tasktable_schema}'")
         if config.processor_name is not None and config.processor_version is not None:
             processor_name = tree.findtext("Processor_Name")
             processor_version = tree.findtext("Version")
