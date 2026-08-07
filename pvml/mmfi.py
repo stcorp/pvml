@@ -221,7 +221,10 @@ class Backend:
             element_path = "Processing_Parameters/Processing_Parameter"
             self.variant_dynamic_processing_parameters = False
         else:
-            element_path = "List_of_Dyn_ProcParam/Dyn_ProcParam"
+            if job.config.variant_alternate_list_of_dyn_procparam_name:
+                element_path = "List_of_Dyn_ProcParams/Dyn_ProcParam"
+            else:
+                element_path = "List_of_Dyn_ProcParam/Dyn_ProcParam"
             self.variant_dynamic_processing_parameters = True
         for element in tree.findall(element_path):
             name = element.findtext("Param_Name")

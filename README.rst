@@ -209,6 +209,11 @@ alternateBreakpointElementName : optional, true/false/0/1, MFFI backend only
   ``BreakPoint``. But by enabling this option the element will be named
   ``Breakpoint`` (with small ``p``).
 
+alternateListOfDynProcParamName : optional, true/false/0/1, MFFI backend only
+  By default the element in the TaskTable is named ``List_of_Dyn_ProcParam``.
+  But by enabling this option the element to be used will be
+  ``List_of_Dyn_ProcParams`` (with trailing ``s``).
+
 alternateDynamicProcessingParameterName : optional, true/false/0/1, MFFI backend only
   By default, in case the task table contains the element named
   ``List_of_Dyn_ProcParam``, the Job Order contains the element

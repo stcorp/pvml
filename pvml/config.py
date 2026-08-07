@@ -75,6 +75,7 @@ class Config:
     variant_global_breakpoint_enable: bool = True
     variant_sensing_time_flag: bool = False
     variant_breakpoint_element_name: str = "BreakPoint"
+    variant_alternate_list_of_dyn_procparam_name: bool = False
     variant_alternate_dynamic_processing_parameter_name: bool = False
     variant_always_include_input_time_interval: bool = False
     variant_clip_input_time_interval_to_sensing_interval: bool = False
@@ -347,6 +348,9 @@ class Config:
         value = tree.findtext("alternateBreakpointElementName")
         if value in ["true", "1"]:
             self.variant_breakpoint_element_name = "Breakpoint"
+        value = tree.findtext("alternateListOfDynProcParamName")
+        if value in ["true", "1"]:
+            self.variant_alternate_list_of_dyn_procparam_name = True
         value = tree.findtext("alternateDynamicProcessingParameterName")
         if value in ["true", "1"]:
             self.variant_alternate_dynamic_processing_parameter_name = True
