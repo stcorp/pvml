@@ -86,6 +86,7 @@
         <xs:element name="globalBreakpointEnable" minOccurs="0" type="xs:boolean"/>
         <xs:element name="sensingTimeFlag" minOccurs="0" type="xs:boolean"/>
         <xs:element name="alternateBreakpointElementName" minOccurs="0" type="xs:boolean"/>
+        <xs:element name="alternateListOfDynProcParamName" minOccurs="0" type="xs:boolean"/>
         <xs:element name="alternateDynamicProcessingParameterName" minOccurs="0" type="xs:boolean"/>
         <xs:element name="alwaysIncludeInputTimeInterval" minOccurs="0" type="xs:boolean"/>
         <xs:element name="clipInputTimeIntervalToSensingInterval" minOccurs="0" type="xs:boolean"/>
