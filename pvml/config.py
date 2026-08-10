@@ -405,14 +405,13 @@ class Config:
         value = tree.findtext("archiveBackend")
         if value is not None:
             self.archive_backend = value
-        element = tree.find("archiveOptions")
-        if element is not None:
             try:
                 __import__(self.archive_backend)
                 archive = sys.modules[self.archive_backend]
             except ImportError:
                 raise Error(f"import of extension module '{self.archive_backend}' failed")
-            self.archive_options = archive.parse_config(self, element)
+            element = tree.find("archiveOptions")
+            self.archive_options = archive.parse_config(self, element)  # element can be None
 
     def read_job_config(self, config_file: Union[Path, str]):
         tree = None
