@@ -357,7 +357,10 @@ class Backend:
         path to the created joborder file.
         """
         if not dry_run:
-            filepath = Path(job.working_directory, f"JobOrder.{job.config.joborder_id}.xml")
+            joborder_file_id = job.config.joborder_id
+            if job.config.joborder_file_id is not None:
+                joborder_file_id = job.config.joborder_file_id
+            filepath = Path(job.working_directory, f"JobOrder.{joborder_file_id}.xml")
             logger.info(f"creating joborder file '{filepath}'")
 
         attributes = {

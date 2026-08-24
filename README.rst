@@ -388,6 +388,11 @@ jobOrderId : mandatory
   the workspace directory and will be included in the name of the joborder file
   that gets provided to the processor.
 
+jobOrderFileId : optional
+  If set, this value will be used in the name of the generated joborder and log
+  files instead of `jobOrderId`. This allows for the use of a different value
+  compared to that used for the workspace subdirectory.
+
 processorName : optional
   This is the name of the processor. It is used, together with
   `processorVersion`, to find the appropriate tasktable file for the job.

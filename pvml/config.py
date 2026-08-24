@@ -97,6 +97,7 @@ class Config:
     # Job specific (common)
     job_config_file: Optional[Path] = None
     joborder_id: str = "0"
+    joborder_file_id: Optional[str] = None
     processor_name: Optional[str] = None
     processor_version: Optional[str] = None
     tasktable_url: Optional[str] = None
@@ -456,6 +457,9 @@ class Config:
         value = tree.findtext("jobOrderId")
         assert value is not None
         self.joborder_id = value
+        value = tree.findtext("jobOrderFileId")
+        if value is not None:
+            self.joborder_file_id = value
         value = tree.findtext("workingDirectory")
         if value is not None:
             self.working_directory = Path(value)

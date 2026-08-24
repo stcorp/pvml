@@ -158,12 +158,15 @@ class Backend:
         """
         assert len(self.tasks) == 0  # don't allow double initialisation
 
+        joborder_file_id = job.config.joborder_id
+        if job.config.joborder_id is not None:
+            joborder_file_id = job.config.joborder_file_id
         # check configuration options
         if job.config.variant_use_numerical_order_id:
             try:
-                int(job.config.joborder_id)
+                int(joborder_file_id)
             except ValueError:
-                raise Error(f"job order identifier '{job.config.joborder_id}' should be an integer")
+                raise Error(f"job order identifier '{joborder_file_id}' should be an integer")
 
         # read task table
         tree = read_tasktable(job.config)
@@ -395,7 +398,7 @@ class Backend:
                                     elif alternative["origin"] in ["PROC", "LOG"]:
                                         input = Input(alternative["file_type"], alternative["file_name_type"])
                                         if alternative["origin"] == "LOG":
-                                            input.files.append(InputFile("LOG." + job.config.joborder_id))
+                                            input.files.append(InputFile("LOG." + joborder_file_id))
                                         elif alternative["file_name_type"] in ["Physical", "Stem"]:
                                             input.files.append(InputFile(alternative["file_type"]))
                                         elif alternative["file_name_type"] == "Regexp":
@@ -475,7 +478,10 @@ class Backend:
         path to the created joborder file.
         """
         if not dry_run:
-            filepath = Path(job.working_directory, f"JobOrder.{job.config.joborder_id}.xml")
+            joborder_file_id = job.config.joborder_id
+            if job.config.joborder_file_id is not None:
+                joborder_file_id = job.config.joborder_file_id
+            filepath = Path(job.working_directory, f"JobOrder.{joborder_file_id}.xml")
             logger.info(f"creating joborder file '{filepath}'")
 
         joborder = etree.Element("Ipf_Job_Order")
@@ -757,7 +763,10 @@ class Backend:
             if len(list_files) == 1:
                 if job.config.variant_listfile_uses_order_id:
                     list_basename = list_files[0].name
-                    expected_list_basename = job.config.joborder_id + ".LIST"
+                    joborder_file_id = job.config.joborder_id
+                    if job.config.joborder_file_id is not None:
+                        joborder_file_id = job.config.joborder_file_id
+                    expected_list_basename = joborder_file_id + ".LIST"
                     if list_basename != expected_list_basename:
                         raise ProcessorError(f"found LIST file with unexpected filename (found '{list_basename}', "
                                              f"expected '{expected_list_basename}')")

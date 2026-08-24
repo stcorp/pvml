@@ -320,7 +320,10 @@ class Job:
             self._retrieve_inputs()
 
             for task in self.tasks:
-                run_task(task.executable, task.name, task.version, str(joborder), self.config.joborder_id,
+                joborder_file_id = self.config.joborder_id
+                if self.config.joborder_file_id is not None:
+                    joborder_file_id = self.config.joborder_file_id
+                run_task(task.executable, task.name, task.version, str(joborder), joborder_file_id,
                          task.expected_exit_codes, self.config.task_wrapper)
 
             self.backend.locate_and_check_outputs(self)
