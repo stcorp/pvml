@@ -1,3 +1,6 @@
+4.2.0 2026-08-25
+~~~~~~~~~~~~~~~~
+
 * Added JobOrderFileId job config option.
 
 * Added alternateListOfDynProcParamName option for MMFI backend.
