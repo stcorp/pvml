@@ -159,7 +159,7 @@ class Backend:
         assert len(self.tasks) == 0  # don't allow double initialisation
 
         joborder_file_id = job.config.joborder_id
-        if job.config.joborder_id is not None:
+        if job.config.joborder_file_id is not None:
             joborder_file_id = job.config.joborder_file_id
         # check configuration options
         if job.config.variant_use_numerical_order_id:

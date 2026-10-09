@@ -1,3 +1,5 @@
+* Fixed issue in handling new JobOrderFileId option in MMFI backend.
+
 4.2.1 2026-09-17
 ~~~~~~~~~~~~~~~~
 
