@@ -1,3 +1,6 @@
+* When determining inputs for MMFI backend a predefined input will now also
+  be used if it has the same ordering rank as earlier appearing alternatives.
+
 4.2.2 2026-10-09
 ~~~~~~~~~~~~~~~~
 

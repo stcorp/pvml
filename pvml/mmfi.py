@@ -330,15 +330,19 @@ class Backend:
                                 continue
                             mandatory = input_element.findtext("Mandatory") != "No"
                             input = None
-                            alternatives = []
+                            alternatives_per_rank = {}
+                            product_types = []
                             for alternative_element in input_element.findall("List_of_Alternatives/Alternative"):
                                 alternative = {}
                                 alternative["file_type"] = alternative_element.findtext("File_Type")
                                 assert alternative["file_type"] is not None
+                                product_types.append(alternative["file_type"])
                                 alternative["file_name_type"] = alternative_element.findtext("File_Name_Type")
                                 assert alternative["file_name_type"] is not None
                                 alternative["origin"] = alternative_element.findtext("Origin")
                                 assert alternative["origin"] is not None
+                                if alternative["origin"] not in ["DB", "PROC", "LOG"]:
+                                    raise Error(f"unknown input origin '{alternative['origin']}'")
                                 alternative["retrieval_mode"] = alternative_element.findtext("Retrieval_Mode")
                                 assert alternative["retrieval_mode"] is not None
                                 value = alternative_element.findtext("Order")
@@ -350,28 +354,34 @@ class Backend:
                                 value = alternative_element.findtext("Input_Source_Data")
                                 if value is not None:
                                     alternative["input_source_data"] = value in ["true", "1"]
-                                alternatives.append(alternative)
-                            alternatives = sorted(alternatives, key=lambda alternative: alternative["order"])
-                            for alternative in alternatives:
-                                if alternative["origin"] == "DB":
-                                    if alternative["file_type"] in input_cache:
-                                        input = input_cache[alternative["file_type"]]
-                                        break
-                                    elif alternative["file_type"] in predefined_inputs:
-                                        predefined_input = predefined_inputs[alternative["file_type"]]
-                                        input = Input(alternative["file_type"], alternative["file_name_type"])
-                                        for input_product in predefined_input.products:
-                                            input.files.append(InputFile(input_product.filename,
-                                                                         input_product.start_time,
-                                                                         input_product.stop_time))
-                                        if "input_source_data" in alternative:
-                                            input.input_source_data = alternative["input_source_data"]
-                                        assert alternative["file_type"] not in job.inputs
-                                        job.inputs[alternative["file_type"]] = \
-                                            predefined_inputs[alternative["file_type"]]
-                                        del predefined_inputs[alternative["file_type"]]
-                                        break
-                                    else:
+                                if alternative["order"] in alternatives_per_rank:
+                                    alternatives_per_rank[alternative["order"]].append(alternative)
+                                else:
+                                    alternatives_per_rank[alternative["order"]] = [alternative]
+                            for rank in sorted(alternatives_per_rank.keys()):
+                                for alternative in alternatives_per_rank[rank]:
+                                    if alternative["origin"] == "DB":
+                                        if alternative["file_type"] in input_cache:
+                                            input = input_cache[alternative["file_type"]]
+                                            break
+                                        elif alternative["file_type"] in predefined_inputs:
+                                            predefined_input = predefined_inputs[alternative["file_type"]]
+                                            input = Input(alternative["file_type"], alternative["file_name_type"])
+                                            for input_product in predefined_input.products:
+                                                input.files.append(InputFile(input_product.filename,
+                                                                             input_product.start_time,
+                                                                             input_product.stop_time))
+                                            if "input_source_data" in alternative:
+                                                input.input_source_data = alternative["input_source_data"]
+                                            assert alternative["file_type"] not in job.inputs
+                                            job.inputs[alternative["file_type"]] = \
+                                                predefined_inputs[alternative["file_type"]]
+                                            del predefined_inputs[alternative["file_type"]]
+                                            break
+                                if input is not None:
+                                    break
+                                for alternative in alternatives_per_rank[rank]:
+                                    if alternative["origin"] == "DB":
                                         signature = inspect.signature(archive.resolve_mmfi)
                                         kwargs = {}
                                         if 'inputs' in signature.parameters:
@@ -396,30 +406,29 @@ class Backend:
                                             assert job_input.product_type not in job.inputs
                                             job.inputs[job_input.product_type] = job_input
                                             break
-                                elif alternative["origin"] in ["PROC", "LOG"]:
-                                    input = Input(alternative["file_type"], alternative["file_name_type"])
-                                    if alternative["origin"] == "LOG":
-                                        input.files.append(InputFile("LOG." + joborder_file_id))
-                                    elif alternative["file_name_type"] in ["Physical", "Stem"]:
-                                        input.files.append(InputFile(alternative["file_type"]))
-                                    elif alternative["file_name_type"] == "Regexp":
-                                        if input.file_type not in job.config.product_types:
-                                            raise Error(f"product type '{input.file_type}' not defined in " +
-                                                        "global config")
-                                        filename = job.config.product_types[input.file_type].match_expression
-                                        if filename is None:
-                                            raise Error(f"match expression for product type '{input.file_type}' " +
-                                                        "missing in global config")
-                                        input.files.append(InputFile(filename))
-                                    else:
-                                        input.files.append(InputFile(""))
-                                    if "input_source_data" in alternative:
-                                        input.input_source_data = alternative["input_source_data"]
+                                    else:  # PROC/LOG
+                                        input = Input(alternative["file_type"], alternative["file_name_type"])
+                                        if alternative["origin"] == "LOG":
+                                            input.files.append(InputFile("LOG." + joborder_file_id))
+                                        elif alternative["file_name_type"] in ["Physical", "Stem"]:
+                                            input.files.append(InputFile(alternative["file_type"]))
+                                        elif alternative["file_name_type"] == "Regexp":
+                                            if input.file_type not in job.config.product_types:
+                                                raise Error(f"product type '{input.file_type}' not defined in " +
+                                                            "global config")
+                                            filename = job.config.product_types[input.file_type].match_expression
+                                            if filename is None:
+                                                raise Error(f"match expression for product type '{input.file_type}' " +
+                                                            "missing in global config")
+                                            input.files.append(InputFile(filename))
+                                        else:
+                                            input.files.append(InputFile(""))
+                                        if "input_source_data" in alternative:
+                                            input.input_source_data = alternative["input_source_data"]
+                                        break
+                                if input is not None:
                                     break
-                                else:
-                                    raise Error(f"unknown input origin '{alternative['origin']}'")
                             if input is None and mandatory:
-                                product_types = [alternative["file_type"] for alternative in alternatives]
                                 expected = ""
                                 if len(product_types) > 0:
                                     if len(product_types) > 1:
